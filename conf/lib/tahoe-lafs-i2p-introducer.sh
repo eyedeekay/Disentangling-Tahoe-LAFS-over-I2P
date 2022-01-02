@@ -1,1 +1,0 @@
-. LUGIN/lib/bin/activate

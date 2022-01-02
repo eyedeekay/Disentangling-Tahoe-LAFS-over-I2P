@@ -1,5 +1,0 @@
-deb http://us.archive.ubuntu.com/ubuntu/ bionic bionic-updates bionic-security main universe
-deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates main universe
-deb http://us.archive.ubuntu.com/ubuntu/ bionic-security main universe
-deb http://ppa.launchpad.net/djcj/libcurl-slim/ubuntu xenial main
-deb file:/home/idk/.i2p/eepsite/docroot/Disentangling-Tahoe-LAFS-over-I2P/tahoe-lafs-i2p ./
