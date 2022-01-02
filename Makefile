@@ -1,7 +1,12 @@
 
 INTRODUCER="pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus"
+
 VERSION="0.0.1"
-BINARY="tahoe-lafs-i2p-client"
+
+CLIENT="tahoe-lafs-i2p-client"
+STORAGE="tahoe-lafs-i2p-storage"
+INTRODUCER="tahoe-lafs-i2p-introducer"
+
 SIGNER=hankhill19580@gmail.com
 
 plugin-base: clean
@@ -26,7 +31,7 @@ script-client:
 	@echo '  echo "[connections]" >> $$PLUGIN/client_config/tahoe.cfg'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  echo "  tcp = disabled" >> $$PLUGIN/client_config/tahoe.cfg'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  mkdir -p $$PLUGIN/client_config/private'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
-	@echo '  echo introducers: >> $$PLUGIN/client_config/private/introducers.yaml'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
+	@echo '  echo "introducers:" >> $$PLUGIN/client_config/private/introducers.yaml'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  echo "  zoidberg:" >> $$PLUGIN/client_config/private/introducers.yaml'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  echo "    furl: pb://cys5w43lvx3oi5lbgk6liet6rbguekuo@i2p:sagljtwlctcoktizkmyv3nyjsuygty6tpkn5riwxlruh3f2oze2q.b32.i2p/introducer" >> $$PLUGIN/client_config/private/introducers.yaml'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  echo "  darknut:" >> $$PLUGIN/client_config/private/introducers.yaml'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
@@ -35,25 +40,28 @@ script-client:
 	@echo 'tahoe start --config=$$PLUGIN/client_config'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	cp -v conf/lib/tahoe-lafs-i2p-client.sh tahoe-lafs-i2p-client
 
-plugin-client:
-	i2p.plugin.native -name=$(BINARY) \
+plugin-clean:
+	rm -rf plugin
+
+plugin-client: plugin-clean script-client
+	i2p.plugin.native -name=$(CLIENT) \
 		-signer=$(SIGNER) \
 		-version "$(VERSION)" \
 		-author=$(SIGNER) \
 		-autostart=true \
-		-clientname=$(BINARY) \
-		-consolename="$(BINARY) - $(CONSOLEPOSTNAME)" \
-		-name="$(BINARY)" \
+		-clientname=$(CLIENT) \
+		-consolename="$(CLIENT) - $(CONSOLEPOSTNAME)" \
+		-name="$(CLIENT)" \
 		-delaystart="1" \
 		-desc="`cat desc`" \
-		-exename=$(BINARY) \
+		-exename=$(CLIENT) \
 		-icondata=icon/icon.png \
-		-updateurl="http://idk.i2p/$(BINARY)/$(BINARY).su3" \
-		-website="http://idk.i2p/$(BINARY)/" \
-		-command="$(BINARY) -conf \"\$$PLUGIN/catbox-i2p.conf\"" \
+		-updateurl="http://idk.i2p/$(CLIENT)/$(CLIENT).su3" \
+		-website="http://idk.i2p/$(CLIENT)/" \
+		-command="$(CLIENT) -conf \"\$$PLUGIN/catbox-i2p.conf\"" \
 		-license=AGPL \
 		-res=conf/
-	unzip -o $(BINARY).zip -d $(BINARY)-zip
+	unzip -o $(CLIENT).zip -d $(CLIENT)-zip
 
 script-storage:
 	@echo '#! /usr/bin/env sh' | tee conf/lib/tahoe-lafs-i2p-storage.sh
@@ -62,6 +70,27 @@ script-storage:
 	@echo 'export CONFIG=$2' | tee conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo 'export I2P=$3' | tee conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo '. $PLUGIN/lib/bin/activate' | tee conf/lib/tahoe-lafs-i2p-storage.sh
+	cp -v conf/lib/tahoe-lafs-i2p-storage.sh tahoe-lafs-i2p-storage
+
+plugin-storage: plugin-clean script-storage
+	i2p.plugin.native -name=$(CLIENT) \
+		-signer=$(SIGNER) \
+		-version "$(VERSION)" \
+		-author=$(SIGNER) \
+		-autostart=true \
+		-clientname=$(CLIENT) \
+		-consolename="$(CLIENT) - $(CONSOLEPOSTNAME)" \
+		-name="$(CLIENT)" \
+		-delaystart="1" \
+		-desc="`cat desc`" \
+		-exename=$(CLIENT) \
+		-icondata=icon/icon.png \
+		-updateurl="http://idk.i2p/$(CLIENT)/$(CLIENT).su3" \
+		-website="http://idk.i2p/$(CLIENT)/" \
+		-command="$(CLIENT) -conf \"\$$PLUGIN/catbox-i2p.conf\"" \
+		-license=AGPL \
+		-res=conf/
+	unzip -o $(CLIENT).zip -d $(CLIENT)-zip
 
 script-introducer:
 	@echo '#! /usr/bin/env sh' | tee conf/lib/tahoe-lafs-i2p-introducer.sh
@@ -70,6 +99,27 @@ script-introducer:
 	@echo 'export CONFIG=$2' | tee conf/lib/tahoe-lafs-i2p-introducer.sh
 	@echo 'export I2P=$3' | tee conf/lib/tahoe-lafs-i2p-introducer.sh
 	@echo '. $PLUGIN/lib/bin/activate' | tee conf/lib/tahoe-lafs-i2p-introducer.sh
+	cp -v conf/lib/tahoe-lafs-i2p-introducer.sh tahoe-lafs-i2p-introducer
+
+plugin-introducer: plugin-clean script-introducer
+	i2p.plugin.native -name=$(CLIENT) \
+		-signer=$(SIGNER) \
+		-version "$(VERSION)" \
+		-author=$(SIGNER) \
+		-autostart=true \
+		-clientname=$(CLIENT) \
+		-consolename="$(CLIENT) - $(CONSOLEPOSTNAME)" \
+		-name="$(CLIENT)" \
+		-delaystart="1" \
+		-desc="`cat desc`" \
+		-exename=$(CLIENT) \
+		-icondata=icon/icon.png \
+		-updateurl="http://idk.i2p/$(CLIENT)/$(CLIENT).su3" \
+		-website="http://idk.i2p/$(CLIENT)/" \
+		-command="$(CLIENT) -conf \"\$$PLUGIN/catbox-i2p.conf\"" \
+		-license=AGPL \
+		-res=conf/
+	unzip -o $(CLIENT).zip -d $(CLIENT)-zip
 
 clean:
 	rm -rf conf
