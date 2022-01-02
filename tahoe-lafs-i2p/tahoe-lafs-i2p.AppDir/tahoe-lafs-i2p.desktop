@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Tahoe-LAFS
+Comment=A Tahoe-LAFS Client Configured for I2P.
+Icon=tahoe-lafs-i2p
+Exec=tahoe %F
+Terminal=true
+Categories=Application;
+Keywords=Python;Filesystems;tahoe;lafs;
+StartupWMClass=tahoe
+MimeType=text/x-python3;
+X-AppImage-Version=.glibc2.25

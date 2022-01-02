@@ -6,7 +6,7 @@ export I2P=$3
 . $PLUGIN/lib/usr/bin/activate
 if [ ! -d "$PLUGIN/client_config" ]; then
 	 SUFFIX=`cat /dev/urandom | tr -dc '[:alpha:]' | fold -w 4 | head -n 1`
-  tahoe create-client --introducer="tahoe-lafs-i2p-introducer" --hide-ip --nickname="tahoe-i2p-$SUFFIX" -C \$PLUGIN/client_config
+  tahoe create-client --introducer="tahoe-lafs-i2p-introducer" --hide-ip --nickname="tahoe-i2p-$SUFFIX" -C $PLUGIN/client_config
   echo "[i2p]" >> $PLUGIN/tahoe.cfg
   echo "  enabled = true" >> $PLUGIN/client_config/tahoe.cfg
   echo "  sam.port =" >> $PLUGIN/client_config/tahoe.cfg

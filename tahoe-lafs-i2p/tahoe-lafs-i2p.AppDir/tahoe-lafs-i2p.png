@@ -1,0 +1,12 @@
+--2022-01-02 16:34:13--  https://pbs.twimg.com/profile_images/1371151405/Screen_shot_2011-05-27_at_9.18.03_AM_400x400.png
+Resolving pbs.twimg.com (pbs.twimg.com)... 192.229.173.16, 2606:2800:220:13d:2176:94a:948:148e
+Connecting to pbs.twimg.com (pbs.twimg.com)|192.229.173.16|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 99042 (97K) [image/png]
+Saving to: ‘Screen_shot_2011-05-27_at_9.18.03_AM_400x400.png’
+
+     0K .......... .......... .......... .......... .......... 51%  623K 0s
+    50K .......... .......... .......... .......... ......    100%  788K=0.1s
+
+2022-01-02 16:34:14 (693 KB/s) - ‘Screen_shot_2011-05-27_at_9.18.03_AM_400x400.png’ saved [99042/99042]
+
