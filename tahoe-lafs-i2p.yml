@@ -1,0 +1,33 @@
+app: tahoe-lafs-i2p
+ingredients:
+  dist: bionic
+  sources:
+    - deb http://us.archive.ubuntu.com/ubuntu/ bionic bionic-updates bionic-security main universe
+    - deb http://us.archive.ubuntu.com/ubuntu/ bionic-updates main universe
+    - deb http://us.archive.ubuntu.com/ubuntu/ bionic-security main universe
+  packages:
+    - python3-venv python3
+  script:
+    - wget -o tahoe-lafs-i2p.png -c https://pbs.twimg.com/profile_images/1371151405/Screen_shot_2011-05-27_at_9.18.03_AM_400x400.png
+script:
+  - cp ../tahoe-lafs-i2p.png ./usr/share/icons/hicolor/256x256/
+  - cp ../tahoe-lafs-i2p.png .
+  - virtualenv --python=python3 usr
+  - ./usr/bin/pip3 install --upgrade cryptography pyopenssl
+  - ./usr/bin/pip3 install tahoe-lafs[i2p]
+  - mkdir -p usr/share/applications/
+  - cat > usr/share/applications/tahoe-lafs-i2p.desktop <<\EOF
+  - [Desktop Entry]
+  - Type=Application
+  - Name=Tahoe-LAFS
+  - Comment=A Tahoe-LAFS Client Configured for I2P.
+  - Icon=tahoe-lafs-i2p
+  - Exec=tahoe %F
+  - Terminal=true
+  - Categories=Application;
+  - Keywords=Python;Filesystems;tahoe;lafs;
+  - StartupWMClass=tahoe
+  - MimeType=text/x-python3;
+  - EOF
+  - cp usr/share/applications/tahoe-lafs-i2p.desktop .
+  - usr/bin/pip3 freeze | grep "tahoe-lafs[i2p]" | cut -d "=" -f 3 >> ../VERSION
