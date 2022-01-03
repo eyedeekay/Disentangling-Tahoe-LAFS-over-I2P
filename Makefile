@@ -204,7 +204,6 @@ index:
 	@echo "<html>" > index.html
 	@echo "<head>" >> index.html
 	@echo "<title>Tahoe-LAFS I2P Plugin</title>" >> index.html
-	@echo '<meta http-equiv="refresh" content="0; url=http://idk.i2p/$(REPO)/tahoe-lafs-i2p.su3">' >> index.html
 	@echo "</head>" >> index.html
 	@echo "<body>" >> index.html
 	markdown README.md >> index.html
