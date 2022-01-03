@@ -28,7 +28,7 @@ script-client:
 	@echo 'export CONFIG=$$2'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo 'export I2P=$$3'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '. $$PLUGIN/lib/usr/bin/activate'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
-	@echo 'if [ ! -d "$$PLUGIN/storage_config" ]; then' | tee -a conf/lib/tahoe-lafs-i2p-client.sh
+	@echo 'if [ ! -d "$$PLUGIN/client_config" ]; then' | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo "	 SUFFIX=\`cat /dev/urandom | tr -dc '[:alpha:]' | fold -w $${1:-4} | head -n 1\`"  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  tahoe create-client --introducer=$(INTRODUCERURL) --hide-ip --nickname="tahoe-i2p-$$SUFFIX" -C $$PLUGIN/client_config'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
 	@echo '  echo "[i2p]" >> $$PLUGIN/client_config/tahoe.cfg'  | tee -a conf/lib/tahoe-lafs-i2p-client.sh
@@ -67,7 +67,7 @@ plugin-client: plugin-clean script-client
 		-command="$(CLIENT) $$PLUGIN $$CONFIG $$I2P" \
 		-license=AGPL \
 		-res=conf/
-	unzip -o $(CLIENT).zip -d $(CLIENT)-zip
+	unzip -o $(CLIENT).zip -d $(CLIENT)-zip &> /dev/null
 
 script-storage:
 	@echo '#! /usr/bin/env sh' | tee conf/lib/tahoe-lafs-i2p-storage.sh
@@ -117,7 +117,7 @@ plugin-storage: plugin-clean script-storage
 		-command="$(STORAGE) $$PLUGIN $$CONFIG $$I2P" \
 		-license=AGPL \
 		-res=conf/
-	unzip -o $(STORAGE).zip -d $(STORAGE)-zip
+	unzip -o $(STORAGE).zip -d $(STORAGE)-zip &> /dev/null
 
 script-introducer:
 	@echo '#! /usr/bin/env sh' | tee conf/lib/tahoe-lafs-i2p-introducer.sh
@@ -164,7 +164,7 @@ plugin-introducer: plugin-clean script-introducer
 		-command="$(INTRODUCER) $$PLUGIN $$CONFIG $$I2P" \
 		-license=AGPL \
 		-res=conf/
-	unzip -o $(INTRODUCER).zip -d $(INTRODUCER)-zip
+	unzip -o $(INTRODUCER).zip -d $(INTRODUCER)-zip &> /dev/null
 
-clean:
-	rm -rf conf
+clean: plugin-clean
+	rm -rf conf *.zip *.su3 *-zip
