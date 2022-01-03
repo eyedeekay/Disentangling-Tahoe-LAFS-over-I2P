@@ -1,1 +1,24 @@
-. LUGIN/lib/bin/activate
+#! /usr/bin/env sh
+set -euo
+export PLUGIN=$1
+export CONFIG=$2
+export I2P=$3
+. $PLUGIN/lib/bin/activate
+if [ ! -d "$PLUGIN/introducer_config" ]; then
+	 SUFFIX=`cat /dev/urandom | tr -dc '[:alpha:]' | fold -w 4 | head -n 1`
+  tahoe create-introducer --hostname=`cat $PLUGIN/b32.txt` --introducer="pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus" --nickname=tahoe-i2p-introducer- --listen=tcp --hostname=$TAHOE_LISTENER -C \$PLUGIN/introducer_config
+  echo "reveal-ip-address = false" >> $PLUGIN/introducer_config/tahoe.cfg
+  sed -i "s|`grep tub.location $PLUGIN/introducer_config/tahoe.cfg`|tub.location = i2p:[YOUR .B32.I2P ADDRESS HERE]|g" $PLUGIN/introducer_config/tahoe.cfg
+  sed -i "s|`grep tub.port $PLUGIN/introducer_config/tahoe.cfg`|tub.port = tcp:7690:interface=127.0.0.1|g" $PLUGIN/introducer_config/tahoe.cfg
+  echo "[i2p]" >> $PLUGIN/introducer_config/tahoe.cfg
+  echo "enabled = true" >> $PLUGIN/introducer_config/tahoe.cfg
+  echo "[connections]" >> $PLUGIN/introducer_config/tahoe.cfg
+  echo "tcp = disabled" >> $PLUGIN/introducer_config/tahoe.cfg
+  mkdir -p $PLUGIN/introducer_config/private
+  echo "introducers:" >> $PLUGIN/introducer_config/private/introducers.yaml
+  echo "  zoidberg:" >> $PLUGIN/introducer_config/private/introducers.yaml
+  echo "    furl: pb://cys5w43lvx3oi5lbgk6liet6rbguekuo@i2p:sagljtwlctcoktizkmyv3nyjsuygty6tpkn5riwxlruh3f2oze2q.b32.i2p/introducer" >> $PLUGIN/introducer_config/private/introducers.yaml
+  echo "  darknut:" >> $PLUGIN/introducer_config/private/introducers.yaml
+  echo "    furl: pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus" >> $PLUGIN/introducer_config/private/introducers.yaml
+fi
+tahoe start --config=$PLUGIN/introducer_config

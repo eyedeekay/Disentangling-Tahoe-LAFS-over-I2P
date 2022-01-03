@@ -1,1 +1,11 @@
 pkg2appimage-1807-x86_64.AppImage
+*.pkg2appimage
+*.pem
+*.crl
+*.crt
+tahoe-lafs-i2p
+conf/lib
+*-zip
+*.su3
+*.zip
+out

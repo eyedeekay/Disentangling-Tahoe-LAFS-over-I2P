@@ -3,10 +3,20 @@ set -euo
 export PLUGIN=$1
 export CONFIG=$2
 export I2P=$3
-. LUGIN/lib/bin/activate
+. $PLUGIN/lib/bin/activate
 if [ ! -d "$PLUGIN/storage_config" ]; then
 	 SUFFIX=`cat /dev/urandom | tr -dc '[:alpha:]' | fold -w 4 | head -n 1`
-  tahoe create-introducer --listen=tcp --hostname=$TAHOE_LISTENER -C \$PLUGIN/storage_config
+  tahoe create-node --hostname=`cat $PLUGIN/b32.txt` --introducer="pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus" --nickname=tahoe-i2p-storage- --listen=tcp --hostname=$TAHOE_LISTENER -C \$PLUGIN/storage_config
+  echo "reveal-ip-address = false" >> $PLUGIN/storage_config/tahoe.cfg
+  sed -i "s|`grep tub.location $PLUGIN/storage_config/tahoe.cfg`|tub.location = i2p:[YOUR .B32.I2P ADDRESS HERE]|g" $PLUGIN/storage_config/tahoe.cfg
+  sed -i "s|`grep tub.port $PLUGIN/storage_config/tahoe.cfg`|tub.port = tcp:7690:interface=127.0.0.1|g" $PLUGIN/storage_config/tahoe.cfg
+  sed -i "s|`grep expire.enabled $PLUGIN/storage_config/tahoe.cfg`|expire.enabled = true|g" $PLUGIN/storage_config/tahoe.cfg
+  sed -i "s|`grep expire.mode $PLUGIN/storage_config/tahoe.cfg`|expire.mode = age|g" $PLUGIN/storage_config/tahoe.cfg
+  sed -i "s|`grep expire.override_lease_duration $PLUGIN/storage_config/tahoe.cfg`|expire.override_lease_duration = 6 month|g" $PLUGIN/storage_config/tahoe.cfg
+  echo "[i2p]" >> $PLUGIN/storage_config/tahoe.cfg
+  echo "enabled = true" >> $PLUGIN/storage_config/tahoe.cfg
+  echo "[connections]" >> $PLUGIN/storage_config/tahoe.cfg
+  echo "tcp = disabled" >> $PLUGIN/storage_config/tahoe.cfg
   mkdir -p $PLUGIN/storage_config/private
   echo "introducers:" >> $PLUGIN/storage_config/private/introducers.yaml
   echo "  zoidberg:" >> $PLUGIN/storage_config/private/introducers.yaml
