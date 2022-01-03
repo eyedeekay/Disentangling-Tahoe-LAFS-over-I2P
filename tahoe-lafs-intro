@@ -6,7 +6,7 @@ export I2P=$3
 . $PLUGIN/lib/usr/bin/activate
 if [ ! -d "$PLUGIN/introducer_config" ]; then
 	 SUFFIX=`cat /dev/urandom | tr -dc '[:alpha:]' | fold -w 4 | head -n 1`
-  tahoe create-introducer --hostname=`cat $PLUGIN/b32.txt` --introducer="pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus" --listen=tcp -C \$PLUGIN/introducer_config
+  tahoe create-introducer --hostname=`cat $PLUGIN/b32.txt` --introducer="pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus" --listen=tcp -C $PLUGIN/introducer_config
   echo "reveal-ip-address = false" >> $PLUGIN/introducer_config/tahoe.cfg
   sed -i "s|`grep tub.location $PLUGIN/introducer_config/tahoe.cfg`|tub.location = i2p:[YOUR .B32.I2P ADDRESS HERE]|g" $PLUGIN/introducer_config/tahoe.cfg
   sed -i "s|`grep tub.port $PLUGIN/introducer_config/tahoe.cfg`|tub.port = tcp:7690:interface=127.0.0.1|g" $PLUGIN/introducer_config/tahoe.cfg

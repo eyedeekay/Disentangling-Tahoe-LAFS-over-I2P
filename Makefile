@@ -12,14 +12,20 @@ SIGNER=hankhill19580@gmail.com
 
 plugin-base: clean tahoe-lafs-i2p
 	mkdir -p conf/lib
-	cp -rv tahoe-lafs-i2p/tahoe-lafs-i2p.AppDir/usr conf/lib/
+	cp -rv tahoe-lafs-i2p conf/lib/usr
 
-tahoe-lafs-i2p:
-	./pkg2appimage-1807-x86_64.AppImage tahoe-lafs-i2p.yml
+tahoe-lafs-i2p: venv
+	#./pkg2appimage-1807-x86_64.AppImage tahoe-lafs-i2p.yml
 
 scripts: plugin-base script-client script-storage script-introducer
 
 plugins: scripts plugin-client plugin-storage plugin-introducer
+
+venv:
+	virtualenv -p python3 tahoe-lafs-i2p
+	bash -c "source tahoe-lafs-i2p/bin/activate && \
+	pip install --upgrade cryptography pyopenssl && \
+	pip install tahoe-lafs[i2p]"
 
 script-client:
 	@echo '#! /usr/bin/env sh' | tee conf/lib/tahoe-lafs-i2p-client.sh
@@ -55,7 +61,7 @@ script-client:
 plugin-clean:
 	rm -rf plugin
 
-plugin-client: plugin-clean script-client
+plugin-client: plugin-clean plugin-base script-client
 	i2p.plugin.native -name=$(CLIENT) \
 		-signer=$(SIGNER) \
 		-version "$(VERSION)" \
@@ -84,7 +90,7 @@ script-storage:
 	@echo '. $$PLUGIN/lib/bin/activate' | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo 'if [ ! -d "$$PLUGIN/storage_config" ]; then' | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo "	 SUFFIX=\`cat /dev/urandom | tr -dc '[:alpha:]' | fold -w $${1:-4} | head -n 1\`"  | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
-	@echo '  tahoe create-node --hostname=`cat $$PLUGIN/b32.txt` --introducer=$(INTRODUCERURL) --nickname=tahoe-i2p-storage-$$SUFFIX --listen=tcp -C \$$PLUGIN/storage_config'  | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
+	@echo '  tahoe create-node --hostname=`cat $$PLUGIN/b32.txt` --introducer=$(INTRODUCERURL) --nickname=tahoe-i2p-storage-$$SUFFIX --listen=tcp -C $$PLUGIN/storage_config'  | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo '  echo "reveal-ip-address = false" >> $$PLUGIN/storage_config/tahoe.cfg'  | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo '  sed -i "s|`grep tub.location $$PLUGIN/storage_config/tahoe.cfg`|tub.location = i2p:[YOUR .B32.I2P ADDRESS HERE]|g" $$PLUGIN/storage_config/tahoe.cfg' | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
 	@echo '  sed -i "s|`grep tub.port $$PLUGIN/storage_config/tahoe.cfg`|tub.port = tcp:7690:interface=127.0.0.1|g" $$PLUGIN/storage_config/tahoe.cfg' | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
@@ -111,7 +117,7 @@ script-storage:
 	@echo 'tahoe run --basedir=$$PLUGIN/storage_config'  | tee -a conf/lib/tahoe-lafs-i2p-storage.sh
 	cp -v conf/lib/tahoe-lafs-i2p-storage.sh $(STORAGE)
 
-plugin-storage: plugin-clean script-storage
+plugin-storage: plugin-clean plugin-base script-storage
 	i2p.plugin.native -name=$(STORAGE) \
 		-signer=$(SIGNER) \
 		-version "$(VERSION)" \
@@ -164,7 +170,7 @@ script-introducer:
 	@echo 'tahoe run --basedir=$$PLUGIN/introducer_config'  | tee -a conf/lib/tahoe-lafs-i2p-introducer.sh
 	cp -v conf/lib/tahoe-lafs-i2p-introducer.sh $(INTRODUCER)
 
-plugin-introducer: plugin-clean script-introducer
+plugin-introducer: plugin-clean plugin-base script-introducer
 	i2p.plugin.native -name=$(INTRODUCER) \
 		-signer=$(SIGNER) \
 		-version "$(VERSION)" \
@@ -185,4 +191,23 @@ plugin-introducer: plugin-clean script-introducer
 	unzip -o $(INTRODUCER).zip -d $(INTRODUCER)-zip &> /dev/null
 
 clean: plugin-clean
-	rm -rf conf *.zip *.su3 *-zip
+	rm -rf conf *.zip *.su3 *-zip tahoe-lafs-i2p
+
+docker:
+	docker build -t eyedeekay/tahoe-lafs .
+
+docker-client:
+	docker run -it --net=host --name tahoe-lafs-client eyedeekay/tahoe-lafs bash -c "/app/lib/tahoe-lafs-client /app /app /app"
+	#docker run -it --net=host --name tahoe-lafs-client eyedeekay/tahoe-lafs ls lib
+
+index:
+	@echo "<html>" > index.html
+	@echo "<head>" >> index.html
+	@echo "<title>Tahoe-LAFS I2P Plugin</title>" >> index.html
+	@echo '<meta http-equiv="refresh" content="0; url=http://idk.i2p/$(REPO)/tahoe-lafs-i2p.su3">' >> index.html
+	@echo "</head>" >> index.html
+	@echo "<body>" >> index.html
+	markdown README.md >> index.html
+	@echo "</body>" >> index.html
+	@echo "</html>" >> index.html
+	

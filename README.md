@@ -1,42 +1,30 @@
-Disentangling-Tahoe-LAFS-over-I2P
+Disentangling Tahoe LAFS over I2P
 =================================
+
+This presents pluginized versions of the [Original Instructions](ORIG.md)
+for hosting Tahoe-LAFS nodes over I2P. Those instructions have been turned
+into shell scripts which automatically configure your Tahoe-LAFS node for
+I2P-only use.
+
+**These plugins are *Unix-ONLY* and depend on bash, python3, and virtualenv**
 
 An updated guide to Tahoe LAFS over I2P
 ---------------------------------------
 
-### Tahoe-LAFS I2P Installation
+In order to keep the Tahoe-LAFS network sustainable over I2P, I recommend
+that people who are using this guide host **both** an 1. "Introducer" and 2. 
+either a "Client" or "Storage" node.
 
- 1. apt-get install build-essential python-dev libffi-dev libssl-dev python-virtualenv python-pip
- 2. pip install --upgrade pip
- 3. pip install --upgrade --user cryptography pyopenssl
- 4. pip install --user tahoe-lafs[i2p]
-    The tahoe binary will be placed in ~/.local/bin.  Create a link in your home folder:
- 5. cd ~ && ln -s ~/.local/bin/tahoe
+### Plugin 1: Tahoe-LAFS Introducer Node
 
-### Create a Tahoe-LAFS I2P client
- 1. cd ~
- 2. ./tahoe create-client -C ~/tahoe-client
- 3. Edit the tahoe.cfg file: 
-    nano ~/tahoe-client/tahoe.cfg
-    Edit the following lines:
-    nickname = [INSERT A NICKNAME FOR YOUR NODE HERE]
-    reveal-IP-address = false
-    introducer.furl = pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus
-    Add the following lines:
-    [i2p]
-    enabled = true
-    sam.port =
-    [connections]
-    tcp = disabled
- 4. Add additional introducers:
-    nano ~/tahoe-client/private/introducers.yaml
-    Add the following lines:
-    introducers:
-      zoidberg:
-        furl: pb://cys5w43lvx3oi5lbgk6liet6rbguekuo@i2p:sagljtwlctcoktizkmyv3nyjsuygty6tpkn5riwxlruh3f2oze2q.b32.i2p/introducer
-      darknut:
-        furl: pb://vxtvdbdibl46yhcjmn4i7yyyskdhfenk@i2p:axru35rlyahg25ydfpcubp5bzktmrafv5bo5ydf5xdox43e3koua.b32.i2p/66p6uo7td6ubnj3moeb23zwjzxb6egus
- 5. Start the node:
-     ./tahoe start ~/tahoe-client
- 6. Open the web frontend:
-     http://127.0.0.1:3456
+
+
+#### Introduce your Introducer!
+
+New Tahoe-LAFS users need to be able to find an introducer in order to connect
+to the Tahoe-LAFS network. As of the writing of this article, there are only 2
+active introducers.
+
+### Plugins 2 and 3: Tahoe-LAFS Client and Storage Nodes
+
+
